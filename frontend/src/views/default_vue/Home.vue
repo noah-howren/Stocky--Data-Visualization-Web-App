@@ -4,23 +4,20 @@
         <img :src="image">
       </div>
         <div class="search_container">
-          <v-col cols="12">
-            <v-combobox
-              label="Ticker"
-              :items="tickerList.map(item => item.symbol)"
-              density="comfortable"
-              v-model="selectedTicker"
-            ></v-combobox>
+          <v-combobox
+            label="Enter a Ticker"
+            :items="tickerList.map(item => item.symbol)"
+            density="comfortable"
+            v-model="selectedTicker"
+          ></v-combobox>
           <v-btn
             v-on:click="search"
             color="green">
             Search
           </v-btn>
-          </v-col>
         </div>
     </div>
 </template>
-, VueApexCharts
 <script>
 import json from '@/components/tickers.json';
 import img from '@/assets/stocky_logo.png'
@@ -54,14 +51,16 @@ export default{
   padding-left:0px;
   padding-bottom:0px;
   padding-right:0px;
+}.search_container {
+    display: flex;
+    width: 100vh;
+    height: 100vh; 
+    padding-top:0px;
+    padding-left:0px;
+    padding-bottom:0px;
+    padding-right:0px;
 }
-.search_container {
-  display: flex;
-  width: 100vh;
-  height: 100vh; 
-  padding-top:0px;
-  padding-left:0px;
-  padding-bottom:0px;
-  padding-right:0px;
+.v-btn{
+  display: inline-block
 }
 </style>

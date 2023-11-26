@@ -1,49 +1,51 @@
 <template>
-    <div class="whole_container">
-        <div class="logo_container">
-            <img :src="image">
+    <v-app app theme="dark" >
+        <div class="whole_container">
+                <nav_bar></nav_bar>
+            <div class="button_container">
+                <v-btn-toggle
+                    v-model="text"
+                    rounded="10"
+                    color="green-accent-4"
+                    divided
+                    @update="refreshPage"
+                >
+                    <v-btn value="d">
+                        Daily
+                    </v-btn>
+                    <v-btn value="w">
+                        Weekly
+                    </v-btn>
+                    <v-btn value="m">
+                        Monthly
+                    </v-btn>
+                    <v-btn value="y">
+                        Yearly
+                    </v-btn>
+                </v-btn-toggle>
+            </div>
+            <div class="chart_container">
+                <apexchart 
+                    type="candlestick"
+                    height="600"
+                    width="1200"
+                    :series="series"
+                    :options="chartOptions"
+                />
+            </div>
         </div>
-        <div class="button_container">
-            <v-btn-toggle
-                v-model="text"
-                rounded="10"
-                color="green-accent-4"
-                divided
-                @update="refreshPage"
-            >
-                <v-btn value="d">
-                    Daily
-                </v-btn>
-                <v-btn value="w">
-                    Weekly
-                </v-btn>
-                <v-btn value="m">
-                    Monthly
-                </v-btn>
-                <v-btn value="y">
-                    Yearly
-                </v-btn>
-            </v-btn-toggle>
-        </div>
-        <div class="chart_container">
-            <apexchart 
-                type="candlestick"
-                height="600"
-                width="1200"
-                :series="series"
-                :options="chartOptions"
-            />
-        </div>
-    </div>
+    </v-app>
 </template>
 
 <script>
 import img from '@/assets/stocky_logo.png';
 import axios from 'axios';
 import ApexCharts from 'vue3-apexcharts';
+import nav_bar from '@/components/nav_bar/nav_bar.vue';
 export default{
     components: {
-          apexchart: ApexCharts,
+        apexchart: ApexCharts,
+        nav_bar
     },
     data(){
         console.log('hello')
@@ -151,10 +153,13 @@ export default{
 </script>
 <style>
 .button_container{
-    padding-top:0px;
-    padding-left:0px;
+    padding-top:75px;
+    padding-left:20px;
     padding-bottom:30px;
     padding-right:0px;
+}
+.chart_container{
+    padding-left:20px;
 }
 .logo_container{
     transform: scale(.25);

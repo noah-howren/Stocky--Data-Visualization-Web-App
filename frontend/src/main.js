@@ -11,8 +11,8 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import * as nav_bar from '@/components/nav_bar/nav_bar.vue'
 import 'vuetify/dist/vuetify.css'
-
 
 const vuetify = createVuetify({
   components,
@@ -21,12 +21,7 @@ const vuetify = createVuetify({
     dark: true, // Enable dark mode
     themes: {
       dark: {
-        // Customize dark mode colors
-        primary: '#4093ff',
-        secondary: '#4d4d4d',
-        success: '#25c760',
-        warning: '#ffc82e',
-        error: '#ff4c29',
+        background: '#181818',
       },
     },
   },
@@ -39,6 +34,9 @@ app.use(vuetify)
 app.component('v-combobox', components.VCombobox)
 app.component('v-btn', components.VBtn)
 app.component('v-btn-toggle', components.VBtnToggle)
+app.component('v-app-bar', components.VAppBar)
+app.component('v-app', components.VApp)
+app.component('v-spacer', components.VSpacer)
 app.component('Button', Button)
 app.component('Listbox', Listbox)
 app.component('Toast', Toast)

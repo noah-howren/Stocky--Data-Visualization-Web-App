@@ -1,5 +1,5 @@
 <template>
-    <v-app app theme="dark" >
+    <v-app app theme="myCustomDark" >
         <div class="whole_container">
                 <nav_bar></nav_bar>
             <div class="button_container">

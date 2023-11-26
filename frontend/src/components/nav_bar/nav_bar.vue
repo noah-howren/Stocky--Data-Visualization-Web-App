@@ -25,7 +25,7 @@
         <div class="crypto_btn_container">
             <v-btn
                 x-large
-                v-on:click="search"
+                v-on:click="stocks"
                 color="blue"
                 class="text-xs-center"
                 variant="flat"
@@ -36,7 +36,7 @@
         <div class="stocks_btn_container">
             <v-btn
                 x-large
-                v-on:click="search"
+                v-on:click="stocks"
                 color="green"
                 class="text-xs-center"
                 variant="flat"
@@ -64,6 +64,9 @@ export default{
     methods:{
         search: function (event){
             router.push('/stocks/' + this.selectedTicker, {redirectCode: 301})
+        },
+        stocks: function (event){
+            router.push('/', {redirectCode: 301})
         }
     }
 }

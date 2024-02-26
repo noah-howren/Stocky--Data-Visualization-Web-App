@@ -43,6 +43,9 @@ import axios from 'axios';
 import ApexCharts from 'vue3-apexcharts';
 import nav_bar from '@/components/nav_bar/nav_bar.vue';
 export default{
+    mounted(){
+        document.title = "Stocky | " + this.$route.params.Ticker;
+    },
     components: {
         apexchart: ApexCharts,
         nav_bar
@@ -86,14 +89,15 @@ export default{
                     }
                 },
                 yaxis: {
+                    forceNiceScale: true,
                     labels:{
-                        formatter: function(value){
-                            return "$"+value;
+                        formatter: function (value) {
+                            return '$' + value.toFixed(2); // Display rounded integers only
                         },
                         style:{
                             colors:'white'
                         }
-                    }
+                    },
                 },
                 xaxis:{
                     tickAmount: 39,
@@ -112,6 +116,7 @@ export default{
         }
     },
     watch: {
+        '$route.params':'searchBar',
         selectedInterval(newValue, oldValue) {
             if (newValue !== oldValue) {
                 this.refreshPage();
@@ -121,29 +126,36 @@ export default{
     methods:{
         async getData() {
             console.log('hi')
-            const path = 'http://127.0.0.1:5000/query/' + this.$route.params.Ticker + '/' +this.selectedInterval;
+            const path = 'http://127.0.0.1:5000/query/stocks/' + this.$route.params.Ticker + '/' +this.selectedInterval;
             const res = await axios.get(path)
             if(!res.code){
                 this.seriesData = Object.entries(res.data).map(([key, value]) => ({
                     x: value['datetime'],
                     y: [
-                        parseFloat(value['open']),
-                        parseFloat(value['high']),
-                        parseFloat(value['low']),
-                        parseFloat(value['close']),
+                        parseFloat(value['open']).toFixed(2),
+                        parseFloat(value['high']).toFixed(2),
+                        parseFloat(value['low']).toFixed(2),
+                        parseFloat(value['close']).toFixed(2),
                         ],
                 }));
                 this.series = [{
                     data: this.seriesData
                 }];
+                const yValues = this.seriesData.flatMap(point => point.y);
+                this.min = Math.min(...yValues) + 1;
+                this.max = Math.max(...yValues) + 1;
+                this.chartOptions['yaxis']['max'] = this.max.toFixed(0);
+                console.log(this.min);
+                this.chartOptions['yaxis']['min'] = this.min.toFixed(0);
+                console.log(this.max)
             }
         },
         async refreshPage(){
-            console.log('test')
             await this.getData()
             this.chartOptions['xaxis']['tickAmount'] = this.tickSON[this.text]
-            //ApexCharts.exec('candles', 'updateSeries', [{data: this.series}], true)
-            //ApexCharts.exec('candles', 'updateOptions', this.chartOptions, false, true)
+        },
+        async searchBar(){
+            window.location.reload();
         }
     },
     created(){

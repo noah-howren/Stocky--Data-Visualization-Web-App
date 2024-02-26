@@ -4,7 +4,6 @@ from flask_cors import CORS
 import requests as rq
 import pandas as pd
 import os
-import json
 
 app = Flask(__name__)
 CORS(app)
@@ -13,8 +12,8 @@ CORS(app)
 def hello():  
     return 'Hello World!'
 
-@app.route('/query/<string:ticker>/<string:interval>')
-def query(ticker, interval):
+@app.route('/query/<string:source>/<string:ticker>/<string:interval>')
+def query(source,ticker, interval):
     intDict = {'d':'5min',
                'w':'4h',
                'm':'1day',
@@ -33,9 +32,13 @@ def query(ticker, interval):
                'y':'%Y-%m-%d'}
     options=['close', 'high', 'low', 'open']
     special = os.getenv('KEY')
-    url = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={intDict[interval]}&outputsize={outDict[interval]}'
+    if source == 'stocks':
+        url = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={intDict[interval]}&outputsize={outDict[interval]}'
+    elif source == 'crypto':
+        url = f'https://api.twelvedata.com/time_series?symbol={ticker}/USD&interval={intDict[interval]}&outputsize={outDict[interval]}'
     header={'Authorization':f"apikey {special}"}
     response = rq.get(url, headers=header)
+    print(response.json())
     results = response.json()['values']
     results.reverse()
     print(len(results))
@@ -44,3 +47,27 @@ def query(ticker, interval):
         for op in options:
             each[op] = "{:.2f}".format(float(each[op]))
     return results
+
+@app.route('/tickerList/<string:exchange>')
+def tickerList(exchange):
+    tickersL = []
+    special = os.getenv('KEY')
+    header={'Authorization':f"apikey {special}"}
+    if exchange == 'crypto':
+        special = os.getenv('KEY')
+        url = 'https://api.twelvedata.com/cryptocurrencies'
+        response = rq.get(url, headers=header)
+        results = response.json()['data']
+        for row in results:
+            if 'USD' in row['symbol']:
+                form = row['symbol'].rstrip('/USD')
+                # For some reason the api returns a lot of values with symbols of just "/USD" so I need to check for those and remove them if they exist
+                if form != '':
+                    tickersL.append(form)
+    else:
+        url = f'https://api.twelvedata.com/stocks?exchange={exchange}'
+        response = rq.get(url, headers=header)
+        results = response.json()['data']
+        for row in results:
+            tickersL.append(row['symbol'])
+    return tickersL

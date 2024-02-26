@@ -13,10 +13,14 @@ dist
 dist-ssr
 coverage
 *.local
-test.ipynb
+*.ipynb
+db.py
+database.py
 /cypress/videos/
 /cypress/screenshots/
-
+__pycache__/
+backend/__pycache__/
+frontend/src/assets/old logos
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -26,3 +30,5 @@ test.ipynb
 *.njsproj
 *.sln
 *.sw?
+*.pyc
+*.pyc

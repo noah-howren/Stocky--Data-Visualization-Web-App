@@ -38,10 +38,8 @@ def query(source,ticker, interval):
         url = f'https://api.twelvedata.com/time_series?symbol={ticker}/USD&interval={intDict[interval]}&outputsize={outDict[interval]}'
     header={'Authorization':f"apikey {special}"}
     response = rq.get(url, headers=header)
-    print(response.json())
     results = response.json()['values']
     results.reverse()
-    print(len(results))
     for each in results:
         each['datetime'] = datetime.strptime(each['datetime'], resDict[interval]).strftime(formDict[interval])
         for op in options:
@@ -51,10 +49,10 @@ def query(source,ticker, interval):
 @app.route('/tickerList/<string:exchange>')
 def tickerList(exchange):
     tickersL = []
+    volumeL = []
     special = os.getenv('KEY')
     header={'Authorization':f"apikey {special}"}
-    if exchange == 'crypto':
-        special = os.getenv('KEY')
+    if exchange in ['crypto', 'CRYPTO']:
         url = 'https://api.twelvedata.com/cryptocurrencies'
         response = rq.get(url, headers=header)
         results = response.json()['data']
@@ -64,10 +62,25 @@ def tickerList(exchange):
                 # For some reason the api returns a lot of values with symbols of just "/USD" so I need to check for those and remove them if they exist
                 if form != '':
                     tickersL.append(form)
+        special = os.getenv('CRYPTORK')
+        header={'x-access-token':special}
+        url = 'https://api.coinranking.com/v2/coins?orderBy=24hVolume'
+        response = rq.get(url, headers=header) 
+        volumeL = response.json()['data']['coins']
+        for r in volumeL:
+            r['price'] = "{:.2f}".format(float(r['price']))
     else:
         url = f'https://api.twelvedata.com/stocks?exchange={exchange}'
         response = rq.get(url, headers=header)
         results = response.json()['data']
         for row in results:
             tickersL.append(row['symbol'])
-    return tickersL
+        special = os.getenv('VOLUME')
+        key = f'apikey={special}'
+        url = f'https://financialmodelingprep.com/api/v3/stock_market/actives?{key}'
+        response = rq.get(url)
+        volumeL = response.json()
+    results = {'tickers':tickersL, 'volume':volumeL, 'exchange':exchange}
+    return results
+
+

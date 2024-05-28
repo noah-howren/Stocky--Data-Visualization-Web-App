@@ -41,7 +41,7 @@
 import img from '@/assets/stocky_logo.png';
 import axios from 'axios';
 import ApexCharts from 'vue3-apexcharts';
-import nav_bar from '@/components/nav_bar/crypto_nav_bar.vue'
+import nav_bar from '@/components/nav_bar/nav_bar.vue'
 export default{
     mounted(){
         document.title = "Stocky Crypto| " + this.$route.params.Ticker;

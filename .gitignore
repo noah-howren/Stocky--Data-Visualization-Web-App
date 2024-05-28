@@ -32,3 +32,5 @@ frontend/src/assets/old logos
 *.sw?
 *.pyc
 *.pyc
+frontend.Dockerfile
+*.dep

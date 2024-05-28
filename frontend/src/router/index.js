@@ -1,7 +1,5 @@
-import Test from '../components/default_vue/Test.vue'
 import Home from '../views/Home/Home.vue'
 import Stocks from '../views/Stocks.vue'
-import Crypto_Home from '../views/Home/Crypto_Home.vue'
 import Crypto from '../views/Crypto.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -14,11 +12,6 @@ const router = createRouter({
     //  name: 'home',
     //  component: HomeView
     //},
-    {
-      path:'/Test',
-      name: 'Test',
-      component: Test
-    },
     {
       path:'/',
       name: 'Home',
@@ -34,7 +27,7 @@ const router = createRouter({
     },
     {
       path:'/Crypto',
-      component: Crypto_Home
+      component: Home
     },
     {
       path:'/Crypto/:Ticker',

@@ -1,32 +1,61 @@
 <template>
     <v-app app theme="myCustomDark">
         <nav_bar></nav_bar>
-        <img :src="background" class="background"> 
+        <img :src="background" class="background" :key="background">
     </v-app>
 </template>
 
 <script>
     import nav_bar from '@/components/nav_bar/nav_bar.vue'
-    import background from '@/assets/bg.gif'
+    import s_background from '@/assets/bg.gif'
+    import c_background from '@/assets/bg_crypto.gif'
+    import axios from 'axios'
+
     export default {
-        mounted(){
+        mounted() {
             document.title = "Stocky | Stocks";
+            this.updateBackground();
         },
         components: {
             nav_bar
         },
-        data(){
-            return{
-                background:background
+        data() {
+            return {
+            background: s_background
+            }
+        },
+        watch: {
+            $route(to, from) {
+            this.updateBackground();
+            }
+        },
+        methods: {
+            updateBackground() {
+            if (this.$route.path.startsWith('/crypto/')) {
+                document.title = "Stocky | Crypto"
+                this.background = c_background
+            } else {
+                document.title = "Stocky | Stocks"
+                this.background = s_background
+            }
+            },
+            reloadBackground() {
+            // Force the image to reload by appending a timestamp
+            this.background = this.background + '?t=' + new Date().getTime();
             }
         }
     }
 </script>
 
 <style scoped>
+* {
+  margin: 0;
+  padding: 0;
+}
 .background{
-    height:950px;
-    margin-left:0px;
+    height:840px;
+    margin-right:10px;
     width:1800px;
 }
+
 </style>

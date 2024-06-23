@@ -11,7 +11,7 @@ Frontend: Vue.js \
 Hosting: None as of yet but may attempt Railway or AWS
 
 ## Future Developments
-I would like to build out UAC functionality for the app with different tiers of roles, with the main functionality being tied to being able to follow certain stocks and their outcomes. I would also like to incorporate some machine learning modeling on the stocks and crypto data. This is something I have some previous experience with working on (see my "Solar Power Generation" project) but the integration into a Web App interface would be new. Lastly I would like to incorporate some finance news API's to enhance the user experience but also possibly into the machine learning as well.
+I would like to build out UAC functionality for the app with different tiers of roles, with the main functionality being tied to being able to follow certain stocks and their outcomes. I would also like to incorporate some machine learning modeling on the stocks and crypto data. This is something I have some previous experience with working on (see my "Solar Power Generation" project) but the integration into a Web App interface would be new.
 
 ## Acknowledgements
 API's Utilized:
@@ -25,5 +25,5 @@ Background assetts proivided by:
 - Crypto Market Gif: Tananchai Dutsadeekun - *World Digital Background Loop* - https://www.youtube.com/watch?v=kWqXMUUcZqc 
 
 ## Contact
-If you would like to contact me in regards to this project or any content hereby within please contact:
+If you would like to contact me in regards to this project send an email to:
 noahhowren@gmail.com

@@ -83,4 +83,11 @@ def tickerList(exchange):
     results = {'tickers':tickersL, 'volume':volumeL, 'exchange':exchange}
     return results
 
-
+@app.route('/news/<string:ticker>/<string:type>')
+def getNews(ticker, type):
+    special = os.getenv('NEWSST')
+    if type == 'stocks':
+        url = f'https://api.marketaux.com/v1/news/all?symbols={ticker}&filter_entities=true&api_token={special}'
+        response = rq.get(url)
+        rsults = response.json()
+        return rsults['data']

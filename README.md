@@ -1,6 +1,6 @@
 # Stocky - Data Visualisation Web App
 Noah Howren \
-Last updated: 5/27/2024
+Last updated: 6/22/2024
 
 ## About the Project
 This project was created as a way to depthen my web development experience, specifically as it pertains to data in an easily consumable form packaged as part of an intuitive web application interface.
@@ -17,7 +17,8 @@ I would like to build out UAC functionality for the app with different tiers of 
 API's Utilized:
 - twelvedata.com
 - coinranking.com 
-- financialmodelingprep.com 
+- financialmodelingprep.com
+- marketaux.com
 
 Background assetts proivided by:
 - Stock Market Gif: Bandwidth Maniac - *Stock Market Background Video* - https://www.youtube.com/watch?v=AFicYbv-mzg 

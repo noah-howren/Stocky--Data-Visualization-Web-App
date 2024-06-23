@@ -33,6 +33,16 @@
                     :options="chartOptions"
                 />
             </div>
+            <div class="news_container" style="display: inline">
+                Latest News:
+                <li v-for="(article, index) in newslst">
+                    <v-img :src=article.image_url
+                        height="400px"
+                        width="400px">
+                    </v-img>
+                    <a :href="article.url" target=article.url> {{article.title}}</a>
+                </li>
+            </div>
         </div>
     </v-app>
 </template>
@@ -58,6 +68,7 @@ export default{
             data:[],
             seriesData:[],
             series:[],
+            newslst:[],
             tickSON: {'d':'39',
                'w':'21',
                'm':'30',
@@ -125,7 +136,7 @@ export default{
     },
     methods:{
         async getData() {
-            console.log('hi')
+            //console.log('hi')
             const path = 'http://127.0.0.1:5000/query/stocks/' + this.$route.params.Ticker + '/' +this.selectedInterval;
             const res = await axios.get(path)
             if(!res.code){
@@ -145,9 +156,14 @@ export default{
                 this.min = Math.min(...yValues) + 1;
                 this.max = Math.max(...yValues) + 1;
                 this.chartOptions['yaxis']['max'] = this.max.toFixed(0);
-                console.log(this.min);
+                //console.log(this.min);    DEBUG
                 this.chartOptions['yaxis']['min'] = this.min.toFixed(0);
-                console.log(this.max)
+                //console.log(this.max)     DEBUG
+            }
+            const newspath = 'http://127.0.0.1:5000/news/' + this.$route.params.Ticker + '/stocks';
+            const newsres = await axios.get(newspath);
+            if(!newsres.code){
+                this.newslst = newsres.data
             }
         },
         async refreshPage(){
@@ -187,5 +203,10 @@ export default{
 }
 .apexcharts-tooltip{
     color:black
+}
+.news_container{
+    list-style-type:none;
+    display:flex;
+    flex-direction: row;
 }
 </style>

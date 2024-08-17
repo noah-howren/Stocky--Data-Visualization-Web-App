@@ -40,8 +40,7 @@
             }
             },
             reloadBackground() {
-            // Force the image to reload by appending a timestamp
-            this.background = this.background + '?t=' + new Date().getTime();
+                this.background = this.background + '?t=' + new Date().getTime();
             }
         }
     }
@@ -53,7 +52,7 @@
   padding: 0;
 }
 .background{
-    height:840px;
+    height:800px;
     margin-right:10px;
     width:1800px;
 }

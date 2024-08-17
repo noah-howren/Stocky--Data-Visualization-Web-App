@@ -13,7 +13,9 @@ def hello():
     return 'Hello World!'
 
 @app.route('/query/<string:source>/<string:ticker>/<string:interval>')
-def query(source,ticker, interval):
+def query(source ,ticker, interval):
+    results = {}
+    # Define intervals based on 
     intDict = {'d':'5min',
                'w':'4h',
                'm':'1day',
@@ -31,19 +33,31 @@ def query(source,ticker, interval):
                'm':'%Y-%m-%d',
                'y':'%Y-%m-%d'}
     options=['close', 'high', 'low', 'open']
-    special = os.getenv('KEY')
+    chart_Key = os.getenv('KEY')
+    news_Key  = os.getenv('NEWSST')
     if source == 'stocks':
-        url = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={intDict[interval]}&outputsize={outDict[interval]}'
+        chart_URL = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={intDict[interval]}&outputsize={outDict[interval]}'
+        news_URL  = f'https://api.marketaux.com/v1/news/all?symbols={ticker}&filter_entities=true&api_token={news_Key}'
     elif source == 'crypto':
-        url = f'https://api.twelvedata.com/time_series?symbol={ticker}/USD&interval={intDict[interval]}&outputsize={outDict[interval]}'
-    header={'Authorization':f"apikey {special}"}
-    response = rq.get(url, headers=header)
-    results = response.json()['values']
-    results.reverse()
-    for each in results:
+        chart_URL = f'https://api.twelvedata.com/time_series?symbol={ticker}/USD&interval={intDict[interval]}&outputsize={outDict[interval]}'
+        news_URL  = f'CRYPTO NEWS URL HERE'
+    header={'Authorization':f"apikey {chart_Key}"}
+    try:
+        chartData = rq.get(chart_URL, headers=header).json()['values']
+    except:
+        chartData = []
+    try:
+        newsData  = rq.get(news_URL).json()['data']
+        #results['name'] = newsData[0]['name']
+    except:
+        newsData = []
+    chartData.reverse()
+    for each in chartData:
         each['datetime'] = datetime.strptime(each['datetime'], resDict[interval]).strftime(formDict[interval])
         for op in options:
             each[op] = "{:.2f}".format(float(each[op]))
+    results['chartData'] = chartData
+    results['newsData']  = newsData
     return results
 
 @app.route('/tickerList/<string:exchange>')
@@ -82,12 +96,3 @@ def tickerList(exchange):
         volumeL = response.json()
     results = {'tickers':tickersL, 'volume':volumeL, 'exchange':exchange}
     return results
-
-@app.route('/news/<string:ticker>/<string:type>')
-def getNews(ticker, type):
-    special = os.getenv('NEWSST')
-    if type == 'stocks':
-        url = f'https://api.marketaux.com/v1/news/all?symbols={ticker}&filter_entities=true&api_token={special}'
-        response = rq.get(url)
-        rsults = response.json()
-        return rsults['data']

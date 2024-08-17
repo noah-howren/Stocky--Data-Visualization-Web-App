@@ -169,9 +169,9 @@ export default{
 }
 .marquee_container{
     padding-top:80px;
-    padding-bottom:10px;
     padding-right:10px;
-    width:20.45%;
+    padding-bottom: 0px;
+    width:20%;
 }
 .symbol{
     color:white

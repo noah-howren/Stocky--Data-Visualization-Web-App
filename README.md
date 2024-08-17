@@ -4,6 +4,8 @@ Last updated: 6/22/2024 \
  \
 Stocks Home Page \
 ![alt text](StocksHome.png)
+Stock View \
+![alt text](StockView.png)
 Crypto Home Page \
 ![alt text](CryptoHome.png)
 ## About the Project

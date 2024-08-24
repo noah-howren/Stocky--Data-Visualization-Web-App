@@ -4,8 +4,18 @@
             <nav_bar></nav_bar>
             <div class="content_container">
                 <div class="chart_section">
+                    <div class="info_container">
+                        <div class="comp_logo">
+                            <img :src="logo_src" alt="Logo">
+                        </div>
+                        <div class="info_text">
+                            {{ name }}
+                            <div class="ticker_text">
+                                {{ tick }}
+                            </div>
+                        </div>
+                    </div>
                     <div class="button_container">
-                        <div class="ticker_text">{{ tick }}</div>
                         <v-btn-toggle
                             v-model="text"
                             rounded="10"
@@ -13,10 +23,10 @@
                             divided
                             @update="refreshPage"
                         >
-                            <v-btn value="d">Daily</v-btn>
-                            <v-btn value="w">Weekly</v-btn>
-                            <v-btn value="m">Monthly</v-btn>
-                            <v-btn value="y">Yearly</v-btn>
+                            <v-btn value="d">Day</v-btn>
+                            <v-btn value="w">Week</v-btn>
+                            <v-btn value="m">Month</v-btn>
+                            <v-btn value="y">Year</v-btn>
                         </v-btn-toggle>
                     </div>
                     <div class="chart_container">
@@ -66,6 +76,8 @@ export default {
             series: [],
             newslst: [],
             tick: '',
+            logo_src: '',
+            name:'',
             tickSON: {
                 'd': '39',
                 'w': '21',
@@ -136,12 +148,15 @@ export default {
         async getData() 
         {
             this.tick = this.$route.params.Ticker;
+             
             const path = `http://127.0.0.1:5000/query/stocks/${this.$route.params.Ticker}/${this.selectedInterval}`;
             
             try {
                 const response = await axios.get(path);
-                const { chartData, newsData } = response.data;
-
+                const { chartData, newsData, infoData} = response.data;
+                this.name = infoData['name']
+                this.logo_src = `https://assets.parqet.com/logos/symbol/${this.tick}?format=png`
+                console.log(this.logo_src)
                 // Process chart data
                 if (chartData && chartData.length > 0) {
                     this.seriesData = chartData.map(value => ({
@@ -197,16 +212,31 @@ export default {
     position:sticky;
     padding: 0px;
 }
+.info_container{
+    margin-top:10px;
+    margin-bottom:35px;
+    display: flex;
+    align-items: flex-start; 
+}
+.comp_logo{
+    padding-top: 10px;
+}
 .content_container {
-    margin-top:35px;
     display: flex;
     justify-content: space-between;
     max-width: 20%;
     align-items: flex-start;
 }
-.ticker_text{
-    margin-bottom: 10px;
+
+.info_text{
+    margin-left: 18px;
     font-size: 50px;
+    align-items: flex-start;
+    color: white;
+}
+
+.ticker_text{
+    font-size: 20px;
     color: white;
 }
 .news_header{
@@ -219,12 +249,13 @@ export default {
     display: flex;
     flex-direction: column;
     margin-right: 20px;
-    max-width: calc(100% - 320px); /* Adjust based on your news section width */
+    max-width: calc(100% - 320px);
+    padding:0px !important;
 }
 
 .button_container {
     margin-bottom: 20px;
-    margin-top:0px;
+    margin-top:0px !important;
     padding: 0px !important;
 }
 

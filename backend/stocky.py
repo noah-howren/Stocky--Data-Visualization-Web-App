@@ -38,9 +38,11 @@ def query(source ,ticker, interval):
     if source == 'stocks':
         chart_URL = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={intDict[interval]}&outputsize={outDict[interval]}'
         news_URL  = f'https://api.marketaux.com/v1/news/all?symbols={ticker}&filter_entities=true&api_token={news_Key}'
+        info_URL  = f'https://api.twelvedata.com/stocks?symbol={ticker}&exchange=NASDAQ'
     elif source == 'crypto':
         chart_URL = f'https://api.twelvedata.com/time_series?symbol={ticker}/USD&interval={intDict[interval]}&outputsize={outDict[interval]}'
         news_URL  = f'CRYPTO NEWS URL HERE'
+        info_URL  = f'INFO URL HERE'
     header={'Authorization':f"apikey {chart_Key}"}
     try:
         chartData = rq.get(chart_URL, headers=header).json()['values']
@@ -51,6 +53,10 @@ def query(source ,ticker, interval):
         #results['name'] = newsData[0]['name']
     except:
         newsData = []
+    try:
+        infoData = rq.get(info_URL, headers=header).json()['data'][0]
+    except:
+        infoData = []
     chartData.reverse()
     for each in chartData:
         each['datetime'] = datetime.strptime(each['datetime'], resDict[interval]).strftime(formDict[interval])
@@ -58,6 +64,7 @@ def query(source ,ticker, interval):
             each[op] = "{:.2f}".format(float(each[op]))
     results['chartData'] = chartData
     results['newsData']  = newsData
+    results['infoData']  = infoData
     return results
 
 @app.route('/tickerList/<string:exchange>')

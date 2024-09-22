@@ -14,8 +14,7 @@ const router = createRouter({
     //},
     {
       path:'/',
-      name: 'Home',
-      component: Home
+      redirect: '/Stocks'
     },
     {
       path:'/Stocks/:Ticker',

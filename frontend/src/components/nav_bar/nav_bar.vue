@@ -56,7 +56,7 @@
                     <router-link 
                         v-for="item in volumeList" 
                         :key="item.symbol" 
-                        :to="item.symbol"
+                        :to="pathAdd + item.symbol" s
                     >
                     <span class="symbol">
                         {{ item.symbol }}
@@ -88,7 +88,9 @@ export default{
             volumeList: [],
             exchange: "NASDAQ",
             logo:logo_stocks,
-            selectedTicker: ''
+            selectedTicker: '',
+            pathAdd: '',
+            sauce: ""
         }
     },
     methods:{
@@ -118,6 +120,12 @@ export default{
             this.$forceUpdate();
         },
         async getData() {
+            if (this.$route.path.startsWith('/crypto')) {
+                this.pathAdd = "/crypto/"
+            }
+            else{
+                this.pathAdd = "/stocks/"
+            }
             const path = 'http://127.0.0.1:5000/tickerList/' + this.exchange;
             const res = await axios.get(path)
             this.tickerList = res.data['tickers']; 

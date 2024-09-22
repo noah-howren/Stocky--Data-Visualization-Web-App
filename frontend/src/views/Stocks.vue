@@ -4,9 +4,9 @@
             <nav_bar></nav_bar>
             <div class="content_container">
                 <div class="chart_section">
-                    <div class="info_container">
-                        <div class="comp_logo">
-                            <img :src="logo_src" alt="Logo">
+                    <div v-if =isFetching class="info_container">
+                        <div v-show="logoLoaded" class="comp_logo">
+                            <img :src="logo_src" alt="Logo" @error="handleLogoError" @load="handleLogoLoad">
                         </div>
                         <div class="info_text">
                             {{ name }}
@@ -39,7 +39,7 @@
                         />
                     </div>
                 </div>
-                <div class="news_section">
+                <div v-if =isNews class="news_section">
                     <div class="news_header">Related News:</div>
                     <div class="news_container" v-if="newslst.length > 0">
                         <div v-for="(article, index) in newslst" :key="index" class="news_box">
@@ -78,6 +78,10 @@ export default {
             tick: '',
             logo_src: '',
             name:'',
+            rawChartData: [],
+            logoLoaded: false,
+            isFetching: false,
+            isNews: false,
             tickSON: {
                 'd': '39',
                 'w': '21',
@@ -142,71 +146,131 @@ export default {
             if (newValue !== oldValue) {
                 this.refreshPage();
             }
+        },
+        '$route.params.Ticker': {
+            immediate: true,
+            handler() {
+                this.resetLogoState();
+            }
         }
     },
     methods: {
-        async getData() 
-        {
+        async getData() {
             this.tick = this.$route.params.Ticker;
-             
             const path = `http://127.0.0.1:5000/query/stocks/${this.$route.params.Ticker}/${this.selectedInterval}`;
-            
             try {
                 const response = await axios.get(path);
-                const { chartData, newsData, infoData} = response.data;
-                this.name = infoData['name']
-                this.logo_src = `https://assets.parqet.com/logos/symbol/${this.tick}?format=png`
-                console.log(this.logo_src)
-                // Process chart data
-                if (chartData && chartData.length > 0) {
-                    this.seriesData = chartData.map(value => ({
-                        x: value.datetime,
-                        y: [
-                            parseFloat(value.open).toFixed(2),
-                            parseFloat(value.high).toFixed(2),
-                            parseFloat(value.low).toFixed(2),
-                            parseFloat(value.close).toFixed(2)
-                        ]
-                    }));
-
-                    this.series = [{ data: this.seriesData }];
-
-                    const yValues = this.seriesData.flatMap(point => point.y);
-                    this.min = Math.min(...yValues) + 1;
-                    this.max = Math.max(...yValues) + 1;
-                    this.chartOptions.yaxis.max = this.max.toFixed(0);
-                    this.chartOptions.yaxis.min = this.min.toFixed(0);
-                } else {
-                    console.error('No chart data available');
+                const { chartData, newsData, infoData } = response.data;
+                this.name = infoData?.name || '';
+                this.logo_src = `https://assets.parqet.com/logos/symbol/${this.tick}?format=png`;
+                
+                this.rawChartData = chartData; // Store the raw chart data
+                this.processChartData(); // Process the chart data
+                if (newsData.length == 0){
+                    this.isNews = false;
                 }
-
-                // Process news data
-                if (newsData && newsData.length > 0) {
-                    this.newslst = newsData.slice(0, 3); // Limit to 3 articles
-                } else {
-                    console.error('No news data available');
+                else{
+                    this.processNewsData(newsData);
                 }
-
-                this.$forceUpdate();
+                this.isFetching = true;
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         },
+        processChartData() {
+            if (Array.isArray(this.rawChartData) && this.rawChartData.length > 0) {
+                this.seriesData = this.rawChartData.map(value => ({
+                    x: value.datetime,
+                    y: [
+                        parseFloat(value.open || 0).toFixed(2),
+                        parseFloat(value.high || 0).toFixed(2),
+                        parseFloat(value.low || 0).toFixed(2),
+                        parseFloat(value.close || 0).toFixed(2)
+                    ]
+                }));
+
+                this.series = [{ data: this.seriesData }];
+
+                const yValues = this.seriesData.flatMap(point => point.y.map(Number));
+                if (yValues.length > 0) {
+                    this.min = Math.min(...yValues);
+                    this.max = Math.max(...yValues);
+                    this.chartOptions.yaxis.max = (this.max + 1).toFixed(0);
+                    this.chartOptions.yaxis.min = (this.min - 1).toFixed(0);
+                }
+            } else {
+                console.warn('No valid chart data available');
+                this.seriesData = [];
+                this.series = [];
+                this.chartOptions.yaxis.max = null;
+                this.chartOptions.yaxis.min = null;
+            }
+            this.chartOptions.xaxis.tickAmount = this.tickSON[this.text] || 39;
+
+        },
+        processNewsData(newsData) {
+            if (newsData && newsData.length > 0) {
+                this.newslst = newsData.slice(0, 3); // Limit to 3 articles
+                this.newsData = true;
+            } else {
+                console.error('No news data available');
+            }
+        },
+        async refreshGraph() {
+            const path = `http://127.0.0.1:5000/refreshGraph/stocks/${this.$route.params.Ticker}/${this.selectedInterval}`;
+            try {
+                const response = await axios.get(path);
+                this.rawChartData = response.data;
+                this.processChartData();
+            }
+            catch (error) {
+                console.error('Error fetching data:', error);
+            }
+            this.processChartData(this.seriesData);
+        },
         async refreshPage() {
-            await this.getData();
-            this.chartOptions['xaxis']['tickAmount'] = this.tickSON[this.text];
+            await this.getData(); // Update the graph
         },
         async searchBar() {
             window.location.reload();
+        },
+        resetLogoState() {
+            this.logoLoaded = false;
+            this.logo_src = `https://assets.parqet.com/logos/symbol/${this.$route.params.Ticker}?format=png`;
+        },
+        handleLogoError() {
+            this.logoLoaded = false;
+        },
+        handleLogoLoad() {
+            this.logoLoaded = true;
         }
     },
     created() {
         this.getData();
     }
+
 }
 </script>
 
 <style>
+.news_section {
+    width: 300px;
+    color: white;
+    align-self: flex-start;
+}
+
+.news_container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.news_box {
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 .nav-bar{
     z-index: 1000;
     position:sticky;
@@ -214,11 +278,13 @@ export default {
 }
 .info_container{
     margin-top:10px;
-    margin-bottom:35px;
+    margin-left:30px;
+    margin-bottom:5px;
     display: flex;
     align-items: flex-start; 
 }
 .comp_logo{
+    margin-right: 18px;
     padding-top: 10px;
 }
 .content_container {
@@ -229,7 +295,6 @@ export default {
 }
 
 .info_text{
-    margin-left: 18px;
     font-size: 50px;
     align-items: flex-start;
     color: white;
@@ -254,32 +319,10 @@ export default {
 }
 
 .button_container {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    margin-left:30px;
     margin-top:0px !important;
     padding: 0px !important;
-}
-
-.chart_container {
-    flex: 1;
-}
-
-.news_section {
-    width: 300px;
-    color: white;
-    align-self: flex-start;
-}
-
-.news_container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.news_box {
-    background-color: #2a2a2a;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .news_title {

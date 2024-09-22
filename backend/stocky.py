@@ -103,3 +103,38 @@ def tickerList(exchange):
         volumeL = response.json()
     results = {'tickers':tickersL, 'volume':volumeL, 'exchange':exchange}
     return results
+
+@app.route('/refreshGraph/<string:source>/<string:ticker>/<string:interval>')
+def refreshGraph(source ,ticker, interval):
+    results = {}
+    chart_Key = os.getenv('KEY')
+    # Define intervals based on 
+    intDict = {'d':'5min',
+               'w':'4h',
+               'm':'1day',
+               'y':'1day'}
+    outDict = {'d':'78',
+               'w':'42',
+               'm':'30',
+               'y':'252'}
+    formDict = {'d':'%I:%M %p',
+                'w':'%m-%d-%Y %I:%M %p',
+                'm':'%m-%d-%Y',
+                'y':'%m-%d-%Y'}
+    resDict = {'d':'%Y-%m-%d %H:%M:%S',
+               'w':'%Y-%m-%d %H:%M:%S',
+               'm':'%Y-%m-%d',
+               'y':'%Y-%m-%d'}
+    options=['close', 'high', 'low', 'open']
+    if source == 'stocks':
+        chart_URL = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={intDict[interval]}&outputsize={outDict[interval]}'
+        header={'Authorization':f"apikey {chart_Key}"}
+    try:
+        chartData = rq.get(chart_URL, headers=header).json()['values']
+    except:
+        chartData = []
+    for each in chartData:
+        each['datetime'] = datetime.strptime(each['datetime'], resDict[interval]).strftime(formDict[interval])
+        for op in options:
+            each[op] = "{:.2f}".format(float(each[op]))
+    return chartData

@@ -39,7 +39,7 @@
                         />
                     </div>
                 </div>
-                <div v-if =isNews class="news_section">
+                <div v-show =isNews class="news_section">
                     <div class="news_header">Related News:</div>
                     <div class="news_container" v-if="newslst.length > 0">
                         <div v-for="(article, index) in newslst" :key="index" class="news_box">
@@ -168,9 +168,12 @@ export default {
                 this.processChartData(); // Process the chart data
                 if (newsData.length == 0){
                     this.isNews = false;
+                    console.log(newsData)
                 }
                 else{
                     this.processNewsData(newsData);
+                    this.isNews = true;
+                    console.log("newsData")
                 }
                 this.isFetching = true;
             } catch (error) {
@@ -265,7 +268,7 @@ export default {
 .news_container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
 }
 
 .news_box {

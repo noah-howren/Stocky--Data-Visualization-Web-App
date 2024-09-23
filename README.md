@@ -1,13 +1,13 @@
 # Stocky - Data Visualisation Web App
 Noah Howren \
-Last updated: 8/24/2024 \
+Last updated: 09/22/2024 \
  \
 Stocks Home Page \
-![alt text](StocksHome.png)
+![alt text](ProjectImages\StocksHome.png)
 Stock View \
-![alt text](StockView.png)
+![alt text](ProjectImages\StockView.png)
 Crypto Home Page \
-![alt text](CryptoHome.png)
+![alt text](ProjectImages\CryptoHome.png)
 ## About the Project
 This project was created as a way to depthen my web development experience, specifically as it pertains to data in an easily consumable form packaged as part of an intuitive web application interface.
 

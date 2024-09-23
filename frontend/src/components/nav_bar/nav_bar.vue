@@ -7,6 +7,7 @@
                     :items="tickerList"
                     density="comfortable"
                     v-model="selectedTicker"
+                    style="font-family: Rubik, sans-serif;"
                     class="stocks"
                 ></v-combobox>
                 <div class="srch_btn_container">

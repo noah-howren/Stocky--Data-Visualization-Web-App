@@ -155,6 +155,7 @@ export default{
     flex-direction: row;
     margin-left: 20px; 
     padding-top:20px;/* Adjust the margin as needed */
+    font-family: "Rubik", sans-serif;
 }
 .exchanges{
     width:150px;
@@ -163,6 +164,7 @@ export default{
 .stocks {
     width: 300px; 
     margin-right: 20px;
+    font-family: "Rubik", sans-serif;
 }
 .srch_btn_container{
     margin-top:10px; 
@@ -170,16 +172,19 @@ export default{
 .crypto_btn_container{
     margin-left:10px;
     margin-right:10px; 
+    font-family: "Rubik", sans-serif;
 }
 .stocks_btn_container{
     margin-left:10px;
     margin-right:20px; 
+    font-family: "Rubik", sans-serif;
 }
 .marquee_container{
     padding-top:80px;
     padding-right:10px;
     padding-bottom: 0px;
     width:20%;
+    font-family: "Rubik", sans-serif;
 }
 .symbol{
     color:white

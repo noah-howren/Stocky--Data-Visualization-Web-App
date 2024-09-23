@@ -7,8 +7,7 @@ import { RouterView } from 'vue-router'
 
 </script>
 <style>
-@font-face {
-    font-family: roboto;
-    src: url('~@/assets/Roboto-Regular.ttf');
-}
+    .rubik { 
+        font-family: "Rubik", sans-serif; 
+    }
 </style>

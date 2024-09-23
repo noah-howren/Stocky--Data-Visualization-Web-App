@@ -56,5 +56,8 @@
     margin-right:10px;
     width:1800px;
 }
+.custom-font {
+    font-family: 'Rubik', sans-serif;
+}
 
 </style>

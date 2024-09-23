@@ -253,6 +253,9 @@ export default {
 </script>
 
 <style>
+.whole_container{
+    font-family: "Rubik", sans-serif;
+}
 .news_section {
     width: 300px;
     color: white;

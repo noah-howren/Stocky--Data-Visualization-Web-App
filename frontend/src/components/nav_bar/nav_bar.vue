@@ -180,12 +180,16 @@ export default{
     margin-right:20px; 
     font-family: "Rubik", sans-serif;
 }
-.marquee_container{
-    padding-top:80px;
-    padding-right:10px;
-    padding-bottom: 0px;
-    width:20%;
-    font-family: "Rubik", sans-serif;
+.marquee_container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 64px; /* Adjust this value to match your app bar height */
+  z-index: 999; /* Just below the app bar */
+  width: 100%;
+  font-family: "Rubik", sans-serif;
+  background-color: rgba(0, 0, 0, 0.8); /* Add a semi-transparent background */
+  padding: 10px 0; /* Add some vertical padding */
 }
 .symbol{
     color:white

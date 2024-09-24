@@ -93,7 +93,8 @@ export default {
                     type: 'candlestick',
                     height: 200,
                     width: 1200,
-                    id: 'candles'
+                    id: 'candles',
+                    fontFamily: 'Rubik, sans-serif'
                 },
                 zoom: {
                     enabled: false
@@ -258,9 +259,12 @@ export default {
 <style>
 .whole_container{
     font-family: "Rubik", sans-serif;
+    position:relative;
 }
 .news_section {
-    width: 300px;
+    padding-left: 5%;
+    padding-top: 2%;
+    width: 500px;
     color: white;
     align-self: flex-start;
 }
@@ -294,9 +298,10 @@ export default {
     padding-top: 10px;
 }
 .content_container {
+    padding-top: 115px !important;
     display: flex;
     justify-content: space-between;
-    max-width: 20%;
+    max-width: 100%;
     align-items: flex-start;
 }
 

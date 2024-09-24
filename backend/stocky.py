@@ -4,7 +4,9 @@ from flask_cors import CORS
 import requests as rq
 import pandas as pd
 import os
-
+import warnings
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 app = Flask(__name__)
 CORS(app)
 

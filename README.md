@@ -32,4 +32,4 @@ Background assetts proivided by:
 
 ## Contact
 If you would like to contact me in regards to this project send an email to:
-noah@howren.me
+noah@howren.dev

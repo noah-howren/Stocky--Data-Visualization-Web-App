@@ -1,14 +1,16 @@
-from flask import Flask
+from flask import Flask, jsonify
 from datetime import datetime
 from flask_cors import CORS
 import requests as rq
 import pandas as pd
 import os
 import warnings
+from twelvedata import TDClient
+td = TDClient(apikey=os.getenv('KEY'))
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/')
 def hello():  
@@ -38,7 +40,8 @@ def query(source ,ticker, interval):
     chart_Key = os.getenv('KEY')
     news_Key  = os.getenv('NEWSST')
     if source == 'stocks':
-        chart_URL = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={intDict[interval]}&outputsize={outDict[interval]}'
+        # Depreciated
+        #chart_URL = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={intDict[interval]}&outputsize={outDict[interval]}'
         news_URL  = f'https://api.marketaux.com/v1/news/all?symbols={ticker}&filter_entities=true&api_token={news_Key}'
         info_URL  = f'https://api.twelvedata.com/stocks?symbol={ticker}&exchange=NASDAQ'
     elif source == 'crypto':
@@ -47,19 +50,23 @@ def query(source ,ticker, interval):
         info_URL  = f'INFO URL HERE'
     header={'Authorization':f"apikey {chart_Key}"}
     try:
-        chartData = rq.get(chart_URL, headers=header).json()['values']
-    except:
+        chartData = td.time_series(
+            symbol=ticker,
+            interval=intDict[interval],
+            outputsize=outDict[interval]
+        ).as_json()
+        chartData = list(reversed(chartData))
+    except :
         chartData = []
     try:
         newsData  = rq.get(news_URL).json()['data']
-        #results['name'] = newsData[0]['name']
     except:
         newsData = []
     try:
         infoData = rq.get(info_URL, headers=header).json()['data'][0]
     except:
         infoData = []
-    chartData.reverse()
+    # DEPRECIATED chartData.reverse()
     for each in chartData:
         each['datetime'] = datetime.strptime(each['datetime'], resDict[interval]).strftime(formDict[interval])
         for op in options:
@@ -70,7 +77,7 @@ def query(source ,ticker, interval):
     return results
 
 @app.route('/tickerList/<string:exchange>')
-def tickerList(exchange):
+def tickerList(exchange): 
     tickersL = []
     volumeL = []
     special = os.getenv('KEY')
@@ -128,11 +135,17 @@ def refreshGraph(source ,ticker, interval):
                'm':'%Y-%m-%d',
                'y':'%Y-%m-%d'}
     options=['close', 'high', 'low', 'open']
-    if source == 'stocks':
-        chart_URL = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={intDict[interval]}&outputsize={outDict[interval]}'
-        header={'Authorization':f"apikey {chart_Key}"}
+    #DEPRECIATED
+    #chart_URL = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={intDict[interval]}&outputsize={outDict[interval]}'
+    #header={'Authorization':f"apikey {chart_Key}"}
     try:
-        chartData = rq.get(chart_URL, headers=header).json()['values']
+        chartData = td.time_series(
+            symbol=ticker,
+            interval=intDict[interval],
+            outputsize=outDict[interval]
+        ).as_json()
+        chartData = list(reversed(chartData))
+        #chartData = rq.get(chart_URL, headers=header).json()['values']
     except:
         chartData = []
     for each in chartData:
@@ -140,3 +153,33 @@ def refreshGraph(source ,ticker, interval):
         for op in options:
             each[op] = "{:.2f}".format(float(each[op]))
     return chartData
+
+@app.route('/homepage/')
+def homePage():
+    options=['close', 'high', 'low', 'open']
+    djia = list(reversed(td.time_series(
+        symbol="DJIA",
+        interval="5min",
+        outputsize=78
+    ).as_json()))
+    spy = list(reversed(td.time_series(
+        symbol="SPY",
+        interval="5min",
+        outputsize=78
+    ).as_json()))
+    comp = list(reversed(td.time_series(
+        symbol="COMP",
+        interval="5min",
+        outputsize=78
+    ).as_json()))
+    retDat = { 
+        'djia': djia,
+        'spy': spy,
+        'comp': comp
+    }
+    for chart in retDat:
+        for each in retDat[chart]:
+            each['datetime'] = datetime.strptime(each['datetime'], '%Y-%m-%d %H:%M:%S').strftime('%I:%M %p')
+            for op in options:
+                each[op] = "{:.2f}".format(float(each[op]))
+    return retDat

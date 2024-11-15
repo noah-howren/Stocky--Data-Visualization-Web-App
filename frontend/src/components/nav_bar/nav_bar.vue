@@ -50,7 +50,7 @@
             <Vue3Marquee
                 :key="volumeList.length"
                 :loop=0
-                :duration = 60
+                :duration = 100
                 :clone="false"
                 :pauseOnHover="true">
                 <div style="display: flex; gap: 50px;"> 
@@ -70,7 +70,7 @@
                     </span>
                     </router-link>
                 </div>
-                <span>     \\\     </span>
+                <span>&emsp; &emsp; &emsp;</span>
             </Vue3Marquee>
         </div>
 </template>
@@ -97,7 +97,6 @@ export default{
     methods:{
         
         search: function (event){
-            console.log(this.$route.path)
             if (this.$route.path.startsWith('/crypto')) {
                 router.push('/crypto/' + this.selectedTicker, {redirectCode: 301})
             }
@@ -131,8 +130,6 @@ export default{
             const res = await axios.get(path)
             this.tickerList = res.data['tickers']; 
             this.volumeList = res.data['volume'];
-            console.log(this.volumeList.length)
-            console.log(this.tickerList.length)
         },
     },
     created(){
@@ -184,12 +181,12 @@ export default{
   position: fixed;
   left: 0;
   right: 0;
-  top: 64px; /* Adjust this value to match your app bar height */
-  z-index: 999; /* Just below the app bar */
+  top: 64px; 
+  z-index: 999; 
   width: 100%;
   font-family: "Rubik", sans-serif;
-  background-color: rgba(0, 0, 0, 0.8); /* Add a semi-transparent background */
-  padding: 10px 0; /* Add some vertical padding */
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px 0;
 }
 .symbol{
     color:white

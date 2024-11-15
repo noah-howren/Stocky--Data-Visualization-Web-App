@@ -1,4 +1,4 @@
-import Home from '../views/Home/Home.vue'
+import Home from '../views/Home.vue'
 import Stocks from '../views/Stocks.vue'
 import Crypto from '../views/Crypto.vue'
 import { createRouter, createWebHistory } from 'vue-router'

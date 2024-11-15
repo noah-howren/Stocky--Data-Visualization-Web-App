@@ -32,7 +32,7 @@
                     <div class="chart_container">
                         <apexchart
                             type="candlestick"
-                            height="600"
+                            height="500"
                             width="1200"
                             :series="series"
                             :options="chartOptions"
@@ -295,7 +295,7 @@ export default {
 }
 .comp_logo{
     margin-right: 18px;
-    padding-top: 10px;
+    padding-top: 5px;
 }
 .content_container {
     padding-top: 115px !important;

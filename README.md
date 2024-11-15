@@ -1,6 +1,6 @@
 # Stocky - Data Visualisation Web App
 Noah Howren \
-Last updated: 09/22/2024 \
+Last updated: 11/14/2024 \
  \
 Stocks Home Page \
 ![alt text](ProjectImages/StocksHome.png)
@@ -32,4 +32,4 @@ Background assetts proivided by:
 
 ## Contact
 If you would like to contact me in regards to this project send an email to:
-noahhowren@gmail.com
+noah@howren.me

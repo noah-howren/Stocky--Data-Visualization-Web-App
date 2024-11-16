@@ -6,6 +6,8 @@ import pandas as pd
 import os
 import warnings
 from twelvedata import TDClient
+from dotenv import load_dotenv
+
 td = TDClient(apikey=os.getenv('KEY'))
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 warnings.filterwarnings("ignore", message="numpy.ufunc size changed")

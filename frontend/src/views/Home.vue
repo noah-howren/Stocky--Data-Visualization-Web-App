@@ -314,6 +314,11 @@
     padding: 0;
 }
 
+.v-theme--myCustomDark {
+    background: transparent !important; /* Transparent to show your background GIF */
+    box-shadow: none; /* Remove any shadows, if present */
+}
+
 .background {
     position: fixed;
     left: 0;
@@ -343,7 +348,7 @@
 }
 
 .chart-box {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.8);
     border-radius: 8px;
     padding: 16px;
     min-width: 400px;

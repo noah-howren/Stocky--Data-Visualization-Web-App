@@ -55,7 +55,6 @@
 </template>
 
 <script>
-import img from '@/assets/stocky_logo.png';
 import axios from 'axios';
 import ApexCharts from 'vue3-apexcharts';
 import nav_bar from '@/components/nav_bar/nav_bar.vue';
@@ -71,7 +70,6 @@ export default {
     data() {
         return {
             text: 'd',
-            image: img,
             seriesData: [],
             series: [],
             newslst: [],
@@ -260,10 +258,11 @@ export default {
 .whole_container{
     font-family: "Rubik", sans-serif;
     position:relative;
+    background: transparent;
 }
 .news_section {
     padding-left: 5%;
-    padding-top: 2%;
+    padding-top: 0%;
     width: 500px;
     color: white;
     align-self: flex-start;

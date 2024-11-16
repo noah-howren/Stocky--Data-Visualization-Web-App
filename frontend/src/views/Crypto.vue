@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import img from '@/assets/stocky_logo.png';
 import axios from 'axios';
 import ApexCharts from 'vue3-apexcharts';
 import nav_bar from '@/components/nav_bar/nav_bar.vue'

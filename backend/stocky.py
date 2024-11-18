@@ -158,9 +158,15 @@ def refreshGraph(source ,ticker, interval):
 
 @app.route('/homepage/')
 def homePage():
+    news_Key = os.getenv('NEWSST')
+    news_URL  = f'https://api.marketaux.com/v1/news/all?must_have_entities=true&industries=Financial&countries=US&api_token={news_Key}'
+    try:
+        newsData  = rq.get(news_URL).json()['data']
+    except:
+        newsData = []
     options=['close', 'high', 'low', 'open']
-    djia = list(reversed(td.time_series(
-        symbol="DJIA",
+    qqq = list(reversed(td.time_series(
+        symbol="QQQ",
         interval="5min",
         outputsize=78
     ).as_json()))
@@ -175,7 +181,7 @@ def homePage():
         outputsize=78
     ).as_json()))
     retDat = { 
-        'djia': djia,
+        'qqq': qqq,
         'spy': spy,
         'comp': comp
     }
@@ -184,4 +190,5 @@ def homePage():
             each['datetime'] = datetime.strptime(each['datetime'], '%Y-%m-%d %H:%M:%S').strftime('%I:%M %p')
             for op in options:
                 each[op] = "{:.2f}".format(float(each[op]))
+    retDat['news'] = newsData
     return retDat

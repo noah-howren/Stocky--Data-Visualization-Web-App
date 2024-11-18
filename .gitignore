@@ -36,3 +36,4 @@ frontend.Dockerfile
 backend.Dockerfile
 *.dep
 backend/myproject_env/
+/venv/

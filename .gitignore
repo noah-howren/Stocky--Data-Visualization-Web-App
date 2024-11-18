@@ -35,3 +35,4 @@ frontend/src/assets/old logos
 frontend.Dockerfile
 backend.Dockerfile
 *.dep
+backend/myproject_env/

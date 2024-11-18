@@ -3,11 +3,11 @@
 Last updated: 11/17/2024 \
  \
 Stocks Home Page \
-![alt text](ProjectImages/StocksHome.png)
+![alt text](ProjectImages/Stocks_Home.png)
 Stock View \
-![alt text](ProjectImages/StockView.png)
+![alt text](ProjectImages/Stock_View.png)
 Crypto Home Page \
-![alt text](ProjectImages/CryptoHome.png)
+![alt text](ProjectImages/Crypto_Home.png)
 ## About the Project
 This project was created as a way to depthen my web development experience, specifically as it pertains to data in an easily consumable form packaged as part of an intuitive web application interface.
 

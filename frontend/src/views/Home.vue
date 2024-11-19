@@ -3,52 +3,29 @@
         <nav_bar></nav_bar>
         <img :src="background" class="background" :key="background">
         <div class="content-wrapper">
-            <div class="chart_header">Key Market Indicies</div>
-            <div class="chart-container">
-                
-                <div class="chart-box">
-                    <h3 class="chart-title">S&P 500</h3>
-                    <apexchart
-                        class="spy"
-                        type="line"
-                        :height="300"
-                        :width="500"
-                        :series="spyData"
-                        :options="spyOpt"
-                    />
-                </div>
-                
-                <div class="chart-box">
-                    <h3 class="chart-title">NASDAQ Composite</h3>
-                    <apexchart
-                        class="comp"
-                        type="line"
-                        :height="300"
-                        :width="500"
-                        :series="compData"
-                        :options="compOpt"
-                    /> 
-                </div>
-                <div class="chart-box">
-                    <h3 class="chart-title">Invesco QQQ Trust</h3>
-                    <apexchart
-                        class="qqq-graph"
-                        type="line"
-                        :height="300"
-                        :width="500"
-                        :series="spyData"
-                        :options="spyOpt"
-                    /> 
+            <div v-show =isCharts class="chart_section">
+                <div class="chart_header">Key Market Indicies</div>
+                <div class="chart_container">
+                    <div v-for="(chart, index) in chartData" :key="index" class="chart_box">
+                        <h3 class="chart_title">{{chart.title}}</h3>
+                        <apexchart
+                            class="spy"
+                            type="line"
+                            :height="300"
+                            :width="500"
+                            :series="chart.data"
+                            :options="chart.chartOpt"
+                        />
+                    </div>
                 </div>
             </div>
-            
             <div v-show =isNews class="news_section">
                 <div class="news_header">Market News</div>
-                <div class="news_container" v-if="newsData.length > 0">
-                    <div v-for="(article, index) in newsData" :key="index" class="news_box">
-                        <v-img :src="article.image_url" height="120px" width="100%" cover></v-img>
-                        <h3 class="news_title">{{ article.title }}</h3>
-                        <a :href="article.url" target="_blank" class="news_link">Read More</a>
+                    <div class="news_container" v-if="newsData.length > 0">
+                        <div v-for="(article, index) in newsData" :key="index" class="news_box">
+                            <v-img :src="article.image_url" height="120px" width="100%" cover></v-img>
+                            <h3 class="news_title">{{ article.title }}</h3>
+                            <a :href="article.url" target="_blank" class="news_link">Read More</a>
                     </div>
                 </div>
             </div>
@@ -66,7 +43,6 @@
         mounted() {
             document.title = "Stocky | Stocks";
             this.updateBackground()
-            this.getData();
         },
         components: {
             nav_bar,
@@ -75,118 +51,12 @@
         data() {
             return {
                 background: s_background,
-                qqqData: [],
-                spyData: [],
-                compData: [],
-                rutData: [],
+                chartData: [],
                 news: [],
                 newsData: [],
                 isNews: false,
-                qqqOpt: {
-                    chart: {
-                        type: 'line',
-                        id: 'lines',
-                        fontFamily: 'Rubik, sans-serif'
-                    },
-                    zoom: {
-                        enabled: false
-                    },
-                    title: {
-                        align: 'left',
-                        style: {
-                            color: 'white',
-                            fontSize: '16px',
-                            fontWeight: 'bold'
-                        }
-                    },
-                    tooltip: {
-                        enabled: true,
-                        followCursor: true,
-                        style: {
-                            color: 'black'
-                        }
-                    },
-                    yaxis: {
-                        forceNiceScale: true,
-                        labels: {
-                            formatter: function(value) {
-                                return '$' + value.toFixed(2);
-                            },
-                            style: {
-                                colors: 'white'
-                            }
-                        }
-                    },
-                    xaxis: {
-                        tickAmount: 10,
-                        labels: {
-                            style: {
-                                colors: 'white'
-                            }
-                        }
-                    },
-                    stroke: {
-                        curve: 'smooth',
-                        width: 2
-                    },
-                    fill: {
-                        type: 'solid',
-                        colors: ['#04ff00']  // Same green color as other charts
-                    }
-                },
-                spyOpt: {
-                    chart: {
-                        type: 'line',
-                        id: 'lines',
-                        fontFamily: 'Rubik, sans-serif'
-                    },
-                    zoom: {
-                        enabled: false
-                    },
-                    title: {
-                        align: 'left',
-                        style: {
-                            color: 'white',
-                            fontSize: '16px',
-                            fontWeight: 'bold'
-                        }
-                    },
-                    tooltip: {
-                        enabled: true,
-                        followCursor: true,
-                        style: {
-                            color: 'black'
-                        }
-                    },
-                    yaxis: {
-                        forceNiceScale: true,
-                        labels: {
-                            formatter: function(value) {
-                                return '$' + value.toFixed(2);
-                            },
-                            style: {
-                                colors: 'white'
-                            }
-                        }
-                    },
-                    xaxis: {
-                        tickAmount: 10,
-                        labels: {
-                            style: {
-                                colors: 'white'
-                            }
-                        }
-                    },
-                    stroke: {
-                        curve: 'smooth',
-                        width: 2
-                    },
-                    fill: {
-                        type: 'solid',
-                        colors: ['#04ff00']
-                    }
-                },
-                compOpt: {
+                isCharts: false,
+                chartOptions: {
                     chart: {
                         type: 'line',
                         id: 'lines',
@@ -247,11 +117,10 @@
         },
         methods: {
             async getData(){
-                const path = `http://127.0.0.1:5000/homepage/`;
+                const path = `http://127.0.0.1:5000/homepage` + this.$route.path;
                 try {
                     const response = await axios.get(path);
-                    console.log('Raw API response:', response.data);
-                    const { comp, qqq, news, spy} = response.data;
+                    const { data, news} = response.data;
                     if (news.length > 0){
                         this.isNews = true;
                         this.newsData = news;
@@ -262,30 +131,46 @@
                         this.newsData = [];
                         console.log("no news!");
                     }
-                    this.qqqData = this.processChartData(qqq);
-                    this.spyData  = this.processChartData(spy);
-                    this.compData = this.processChartData(comp);
+                    if (data.length > 0){
+                        this.isCharts = true;
+                        this.chartData = [];
+                        for (const dataset of data)
+                        {
+                            console.log(dataset.Title);
+                            const chrtOpt = JSON.parse(JSON.stringify(this.chartOptions));
+                            chrtOpt.fill.colors = [dataset.Fill];
+                            this.chartData.push({'title':dataset.Title, 'data':this.processChartData(dataset.Data), 'chartOpt':chrtOpt});
+                        }
+                    }
+                    else{
+                        this.isCharts = false;
+                        this.chartData = [];
+                        console.log("no charts!");
+                    }
+            
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 }
             },
             updateBackground() {
-            if (this.$route.path.startsWith('/crypto/')) {
-                document.title = "Stocky | Crypto"
-                this.background = c_background
-            } else {
-                document.title = "Stocky | Stocks"
-                this.background = s_background
-            }
+                console.log('TRIGGERED')
+                if (this.$route.path.startsWith('/crypto/')) {
+                    document.title = "Stocky | Crypto";
+                    this.background = c_background;
+                } else {
+                    document.title = "Stocky | Stocks";
+                    this.background = s_background;
+                }
+                this.getData();
             },
             reloadBackground() {
                 this.background = this.background + '?t=' + new Date().getTime();
+
             },
             processChartData(chartData) {
                 if (!Array.isArray(chartData) || chartData.length === 0) {
                     return [];
                 }
-                console.log('Raw chart data:', chartData);
                 return [{
                     name: 'Price',
                     data: chartData.map(item => ({
@@ -327,62 +212,31 @@
     font-family: 'Rubik', sans-serif;
 }
 
-.chart_header {
-    color: white;
-    font-size: 30px;
-    font-style: italic;
-    font-weight: bold;
-    margin-bottom: 0px;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: fit-content;
-}
-.chart-container {
-    display: flex;
-    max-width: fit-content;
-    margin-left:auto;
-    margin-right:auto;
-    margin-inline: auto;
-    flex-direction: row;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 32px;
-    padding: 20px;
-    flex-wrap: wrap;
+.custom-font {
+    font-family: 'Rubik', sans-serif;
 }
 
-.chart-box {
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: 8px;
-    padding: 16px;
-    min-width: 400px;
-}
-
-.chart-title {
+.chart_title {
     color: white;
     margin-bottom: 16px;
     font-size: 18px;
     font-weight: 500;
     text-align: center;
 }
-
-.custom-font {
-    font-family: 'Rubik', sans-serif;
-}
-
-.chart-box {
+.chart_box {
     background: rgba(0, 0, 0, 0.8);
     border-radius: 8px;
     padding: 16px;
-    min-width: 400px;
+    min-width: 450px;
 }
 
-.news_section {
+.chart_section, .news_section {
     padding-left: 20px;
     width: 100%;
+    max-width: 100%;
 }
 
-.news_header {
+.news_header, .chart_header{
     color: white;
     font-size: 30px;
     font-style: italic; 
@@ -394,7 +248,7 @@
     max-width: fit-content;
 }
 
-.news_container {
+.chart_container, .news_container {
     display: flex;
     justify-content: flex-start;
     margin-left: auto;

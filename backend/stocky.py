@@ -156,39 +156,82 @@ def refreshGraph(source ,ticker, interval):
             each[op] = "{:.2f}".format(float(each[op]))
     return chartData
 
-@app.route('/homepage/')
-def homePage():
-    news_Key = os.getenv('NEWSST')
-    news_URL  = f'https://api.marketaux.com/v1/news/all?must_have_entities=true&industries=Financial&countries=US&api_token={news_Key}'
-    try:
-        newsData  = rq.get(news_URL).json()['data']
-    except:
+@app.route('/homepage/<string:source>/')
+def homePage(source):
+    retDat = {'news': [], 'data': []}
+    if source in ('stocks', 'Stocks'):
+        news_Key = os.getenv('NEWSST')
+        news_URL  = f'https://api.marketaux.com/v1/news/all?must_have_entities=true&industries=Financial&countries=US&api_token={news_Key}'
+        try:
+            newsData  = rq.get(news_URL).json()['data']
+        except:
+            newsData = []
+        options=['close', 'high', 'low', 'open']
+        qqq = list(reversed(td.time_series(
+            symbol="QQQ",
+            interval="5min",
+            outputsize=78
+        ).as_json()))
+        spy = list(reversed(td.time_series(
+            symbol="SPY",
+            interval="5min",
+            outputsize=78
+        ).as_json()))
+        comp = list(reversed(td.time_series(
+            symbol="COMP",
+            interval="5min",
+            outputsize=78
+        ).as_json()))
+        chartData = [
+            {'Title':'Invesco QQQ Trust', 'Data': qqq,  'Fill': '#04ff00' if qqq[0]['close'] < qqq[-1]['close']   else '#ff0008'},
+            {'Title':'S&P 500',           'Data': spy,  'Fill': '#04ff00' if spy[0]['close'] < spy[-1]['close']   else '#ff0008'},
+            {'Title':'NASDAQ Composite',  'Data': comp, 'Fill': '#04ff00' if comp[0]['close'] < comp[-1]['close'] else '#ff0008'}
+        ]
+        for dataset in chartData:
+            for each in dataset['Data']:
+                each['datetime'] = datetime.strptime(each['datetime'], '%Y-%m-%d %H:%M:%S').strftime('%I:%M %p')
+                for op in options:
+                    each[op] = "{:.2f}".format(float(each[op]))
+        retDat['news'] = newsData
+        retDat['data'] = chartData
+    retDat = {'news': [], 'data': []}
+    if source in ('crypto', 'Crypto'):
+        
+        #news_Key = os.getenv('NEWSST')
+        #news_URL  = f'https://api.marketaux.com/v1/news/all?must_have_entities=true&industries=Financial&countries=US&api_token={news_Key}'
+        #try:
+            #newsData  = rq.get(news_URL).json()['data']
+        #except:
         newsData = []
-    options=['close', 'high', 'low', 'open']
-    qqq = list(reversed(td.time_series(
-        symbol="QQQ",
-        interval="5min",
-        outputsize=78
-    ).as_json()))
-    spy = list(reversed(td.time_series(
-        symbol="SPY",
-        interval="5min",
-        outputsize=78
-    ).as_json()))
-    comp = list(reversed(td.time_series(
-        symbol="COMP",
-        interval="5min",
-        outputsize=78
-    ).as_json()))
-    retDat = { 
-        'qqq': qqq,
-        'spy': spy,
-        'comp': comp
-    }
-    for chart in retDat:
-        for each in retDat[chart]:
-            each['datetime'] = datetime.strptime(each['datetime'], '%Y-%m-%d %H:%M:%S').strftime('%I:%M %p')
-            for op in options:
-                each[op] = "{:.2f}".format(float(each[op]))
-    retDat['news'] = newsData
+        options=['close', 'high', 'low', 'open']
+        btc = list(reversed(td.time_series(
+            symbol="BTC/USD",
+            exchange="Huobi",
+            interval="5min",
+            outputsize=78
+        ).as_json()))
+        eth = list(reversed(td.time_series(
+            symbol="ETH/USD",
+            exchange="Huobi",
+            interval="5min",
+            outputsize=78
+        ).as_json()))
+        sol = list(reversed(td.time_series(
+            symbol="SOL/USD",
+            exchange="Huobi",
+            interval="5min",
+            outputsize=78
+        ).as_json()))
+        chartData = [
+            {'Title':'Bitcoin', 'Data': btc,  'Fill': '#04ff00' if btc[0]['close'] < btc[-1]['close']   else '#ff0008'},
+            {'Title':'Ethereum', 'Data': eth,  'Fill': '#04ff00' if eth[0]['close'] < eth[-1]['close']   else '#ff0008'},
+            {'Title':'Solana', 'Data': sol, 'Fill': '#04ff00' if sol[0]['close'] < sol[-1]['close'] else '#ff0008'}
+        ]
+        for dataset in chartData:
+            for each in dataset['Data']:
+                each['datetime'] = datetime.strptime(each['datetime'], '%Y-%m-%d %H:%M:%S').strftime('%I:%M %p')
+                for op in options:
+                    each[op] = "{:.2f}".format(float(each[op]))
+        retDat['news'] = newsData
+        retDat['data'] = chartData
     return retDat

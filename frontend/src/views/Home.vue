@@ -4,7 +4,7 @@
         <img :src="background" class="background" :key="background">
         <div class="content-wrapper">
             <div v-show =isCharts class="chart_section">
-                <div class="chart_header">Key Market Indicies</div>
+                <div class="chart_header">{{chartCaption}}</div>
                 <div class="chart_container">
                     <div v-for="(chart, index) in chartData" :key="index" class="chart_box">
                         <h3 class="chart_title">{{chart.title}}</h3>
@@ -56,6 +56,7 @@
                 newsData: [],
                 isNews: false,
                 isCharts: false,
+                chartCaption: 'Key Market Indicies',
                 chartOptions: {
                     chart: {
                         type: 'line',
@@ -153,13 +154,14 @@
                 }
             },
             updateBackground() {
-                console.log('TRIGGERED')
                 if (this.$route.path.startsWith('/crypto/')) {
                     document.title = "Stocky | Crypto";
                     this.background = c_background;
+                    this.chartCaption = "Top Cryptocurrencies";
                 } else {
                     document.title = "Stocky | Stocks";
                     this.background = s_background;
+                    this.chartCaption = "Key Market Indicies";
                 }
                 this.getData();
             },
@@ -234,6 +236,7 @@
     padding-left: 20px;
     width: 100%;
     max-width: 100%;
+    align-items: center !important;
 }
 
 .news_header, .chart_header{
@@ -242,7 +245,7 @@
     font-style: italic; 
     font-weight: bold;
     margin-left: auto;
-    margin-top: 0px;
+    margin-top: 20px;
     margin-right: auto;
     padding-bottom: 20px;
     max-width: fit-content;
@@ -250,7 +253,7 @@
 
 .chart_container, .news_container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     margin-left: auto;
     margin-right: auto;
     flex-direction: row;
@@ -263,8 +266,9 @@
     background: rgba(0, 0, 0, 0.8);
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 531px;
+    width: 532px;
     flex-direction: column;
+    margin: 0; 
 }
 
 .news_title {

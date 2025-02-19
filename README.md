@@ -1,6 +1,6 @@
 # Stocky - Data Visualisation Web App
 ### Noah Howren 
-Last updated: 11/20/2024 
+Last updated: 02/18/2025 
 ### Stocks Home Page
 ![alt text](ProjectImages/Stocks_Home.png)
 ### Stock View

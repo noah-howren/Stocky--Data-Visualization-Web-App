@@ -1,16 +1,12 @@
-from flask import Flask, jsonify
-from datetime import datetime
-from flask_cors import CORS
-import requests as rq
-import pandas as pd
 import os
-import warnings
+from datetime import datetime
+
+import requests
+from flask import Flask
+from flask_cors import CORS
 from twelvedata import TDClient
-from dotenv import load_dotenv
 
 td = TDClient(apikey=os.getenv('KEY'))
-warnings.filterwarnings("ignore", message="numpy.dtype size changed")
-warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
@@ -22,7 +18,7 @@ def hello():
 def query(source ,ticker, interval):
     results = {}
     # Define intervals based on 
-    intDict = {'d':'5min',
+    int_dict = {'d':'5min',
                'w':'4h',
                'm':'1day',
                'y':'1day'}
@@ -43,29 +39,31 @@ def query(source ,ticker, interval):
     news_Key  = os.getenv('NEWSST')
     if source == 'stocks':
         # Depreciated
-        #chart_URL = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={intDict[interval]}&outputsize={outDict[interval]}'
-        news_URL  = f'https://api.marketaux.com/v1/news/all?symbols={ticker}&filter_entities=true&api_token={news_Key}'
-        info_URL  = f'https://api.twelvedata.com/stocks?symbol={ticker}&exchange=NASDAQ'
+        #chart_url = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={int_dict[interval]}&outputsize={outDict[interval]}'
+        news_url  = f'https://api.marketaux.com/v1/news/all?symbols={ticker}&filter_entities=true&api_token={news_Key}'
+        info_url  = f'https://api.twelvedata.com/stocks?symbol={ticker}&exchange=NASDAQ'
     elif source == 'crypto':
-        chart_URL = f'https://api.twelvedata.com/time_series?symbol={ticker}/USD&interval={intDict[interval]}&outputsize={outDict[interval]}'
-        news_URL  = f'CRYPTO NEWS URL HERE'
-        info_URL  = f'INFO URL HERE'
+        # Depreciated
+        # chart_url = f'https://api.twelvedata.com/time_series?symbol={ticker}/USD&interval={int_dict[interval]}&outputsize={outDict[interval]}'
+        ticker = ticker + '/USD'
+        news_url  = f'CRYPTO NEWS url HERE'
+        info_url  = f'INFO url HERE'
     header={'Authorization':f"apikey {chart_Key}"}
     try:
         chartData = td.time_series(
             symbol=ticker,
-            interval=intDict[interval],
+            interval=int_dict[interval],
             outputsize=outDict[interval]
         ).as_json()
         chartData = list(reversed(chartData))
     except :
         chartData = []
     try:
-        newsData  = rq.get(news_URL).json()['data']
+        newsData  = requests.get(news_url).json()['data']
     except:
         newsData = []
     try:
-        infoData = rq.get(info_URL, headers=header).json()['data'][0]
+        infoData = requests.get(info_url, headers=header).json()['data'][0]
     except:
         infoData = []
     # DEPRECIATED chartData.reverse()
@@ -81,12 +79,12 @@ def query(source ,ticker, interval):
 @app.route('/tickerList/<string:exchange>')
 def tickerList(exchange): 
     tickersL = []
-    volumeL = []
+    volume_list = []
     special = os.getenv('KEY')
     header={'Authorization':f"apikey {special}"}
     if exchange in ['crypto', 'CRYPTO']:
         url = 'https://api.twelvedata.com/cryptocurrencies'
-        response = rq.get(url, headers=header)
+        response = requests.get(url, headers=header)
         results = response.json()['data']
         for row in results:
             if 'USD' in row['symbol']:
@@ -97,22 +95,22 @@ def tickerList(exchange):
         special = os.getenv('CRYPTORK')
         header={'x-access-token':special}
         url = 'https://api.coinranking.com/v2/coins?orderBy=24hVolume'
-        response = rq.get(url, headers=header) 
-        volumeL = response.json()['data']['coins']
-        for r in volumeL:
+        response = requests.get(url, headers=header) 
+        volume_list = response.json()['data']['coins']
+        for r in volume_list:
             r['price'] = "{:.2f}".format(float(r['price']))
     else:
         url = f'https://api.twelvedata.com/stocks?exchange={exchange}'
-        response = rq.get(url, headers=header)
+        response = requests.get(url, headers=header)
         results = response.json()['data']
         for row in results:
             tickersL.append(row['symbol'])
         special = os.getenv('VOLUME')
         key = f'apikey={special}'
         url = f'https://financialmodelingprep.com/api/v3/stock_market/actives?{key}'
-        response = rq.get(url)
-        volumeL = response.json()
-    results = {'tickers':tickersL, 'volume':volumeL, 'exchange':exchange}
+        response = requests.get(url)
+        volume_list = response.json()
+    results = {'tickers':tickersL, 'volume':volume_list, 'exchange':exchange}
     return results
 
 @app.route('/refreshGraph/<string:source>/<string:ticker>/<string:interval>')
@@ -120,7 +118,7 @@ def refreshGraph(source ,ticker, interval):
     results = {}
     chart_Key = os.getenv('KEY')
     # Define intervals based on 
-    intDict = {'d':'5min',
+    int_dict = {'d':'5min',
                'w':'4h',
                'm':'1day',
                'y':'1day'}
@@ -138,16 +136,16 @@ def refreshGraph(source ,ticker, interval):
                'y':'%Y-%m-%d'}
     options=['close', 'high', 'low', 'open']
     #DEPRECIATED
-    #chart_URL = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={intDict[interval]}&outputsize={outDict[interval]}'
+    #chart_url = f'https://api.twelvedata.com/time_series?symbol={ticker}&interval={int_dict[interval]}&outputsize={outDict[interval]}'
     #header={'Authorization':f"apikey {chart_Key}"}
     try:
         chartData = td.time_series(
             symbol=ticker,
-            interval=intDict[interval],
+            interval=int_dict[interval],
             outputsize=outDict[interval]
         ).as_json()
         chartData = list(reversed(chartData))
-        #chartData = rq.get(chart_URL, headers=header).json()['values']
+        #chartData = requests.get(chart_url, headers=header).json()['values']
     except:
         chartData = []
     for each in chartData:
@@ -164,9 +162,9 @@ def homePage(source):
     newsData = []
     if source in ('stocks', 'Stocks'):
         news_Key = os.getenv('NEWSST')
-        news_URL  = f'https://api.marketaux.com/v1/news/all?must_have_entities=true&industries=Financial&countries=US&api_token={news_Key}'
+        news_url  = f'https://api.marketaux.com/v1/news/all?must_have_entities=true&industries=Financial&countries=US&api_token={news_Key}'
         try:
-            newsData  = rq.get(news_URL).json()['data']
+            newsData  = requests.get(news_url).json()['data']
         except:
             pass
         try:
@@ -214,9 +212,9 @@ def homePage(source):
         '''
     if source in ('crypto', 'Crypto'):
         news_Key = os.getenv('CRPNWS')
-        news_URL  = f"https://gnews.io/api/v4/search?q=cryptocurrency&lang=en&country=us&max=3&apikey={news_Key}"
+        news_url  = f"https://gnews.io/api/v4/search?q=cryptocurrency&lang=en&country=us&max=3&apikey={news_Key}"
         try:
-            newsData  = rq.get(news_URL).json()['articles']
+            newsData  = requests.get(news_url).json()['articles']
             for each in newsData:
                 each['image_url'] = each.pop('image')
         except:

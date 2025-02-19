@@ -156,7 +156,8 @@ export default {
     methods: {
         async getData() {
             this.tick = this.$route.params.Ticker;
-            const path = `http://127.0.0.1:5000/query/stocks/${this.$route.params.Ticker}/${this.selectedInterval}`;
+            const path = `http://127.0.0.1:5000/query${this.$route.path}/${this.selectedInterval}`;
+            console.log(path)
             try {
                 const response = await axios.get(path);
                 const { chartData, newsData, infoData } = response.data;

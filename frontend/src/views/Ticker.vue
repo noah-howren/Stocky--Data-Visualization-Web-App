@@ -156,7 +156,7 @@ export default {
     methods: {
         async getData() {
             this.tick = this.$route.params.Ticker;
-            const path = import.meta.env.backend + `/query${this.$route.path}/${this.selectedInterval}`;
+            const path = import.meta.env.BACKEND + `/query${this.$route.path}/${this.selectedInterval}`;
             console.log(path)
             try {
                 const response = await axios.get(path);
@@ -220,7 +220,7 @@ export default {
             }
         },
         async refreshGraph() {
-            const path = import.meta.env.backend + `/refreshGraph/stocks/${this.$route.params.Ticker}/${this.selectedInterval}`;
+            const path = import.meta.env.BACKEND + `/refreshGraph/stocks/${this.$route.params.Ticker}/${this.selectedInterval}`;
             try {
                 const response = await axios.get(path);
                 this.rawChartData = response.data;

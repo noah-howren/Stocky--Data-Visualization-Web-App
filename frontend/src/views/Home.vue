@@ -118,6 +118,7 @@
         },
         methods: {
             async getData(){
+                console.log(import.meta.env.BACKEND);
                 const path = import.meta.env.BACKEND + `/homepage` + this.$route.path;
                 try {
                     const response = await axios.get(path);

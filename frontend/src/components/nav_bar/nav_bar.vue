@@ -126,7 +126,7 @@ export default{
             else{
                 this.pathAdd = "/stocks/"
             }
-            const path = 'http://127.0.0.1:5000/tickerList/' + this.exchange;
+            const path = import.meta.env.backend + '/tickerList/' + this.exchange;
             const res = await axios.get(path)
             this.tickerList = res.data['tickers']; 
             this.volumeList = res.data['volume'];

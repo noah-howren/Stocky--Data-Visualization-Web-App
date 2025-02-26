@@ -119,7 +119,7 @@
         methods: {
             async getData(){
                 console.log(import.meta.env.BACKEND);
-                const path = import.meta.env.BACKEND + `/homepage` + this.$route.path;
+                const path = `https://stocky-backend.onrender.com/homepage` + this.$route.path;
                 try {
                     const response = await axios.get(path);
                     const { data, news} = response.data;

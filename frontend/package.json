@@ -14,7 +14,8 @@
     "vuetify": "^3.3.15",
     "vue3-marquee": "^3.1.2",
     "@fontsource-variable/rubik": "^5.0.0",
-    "firebase": "^10.1.0"
+    "firebase": "^10.1.0",
+    "axios":"^1.4.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",

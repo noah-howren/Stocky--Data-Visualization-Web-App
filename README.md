@@ -3,9 +3,9 @@
 Last updated: 02/26/2025 
 #### Major Update!
 Stocky is now live! \
-I utilized render.com to host this project at [stocky.howren.dev](stocky.howren.dev)! \
+I utilized render.com to host this project at [stocky.howren.dev](https://stocky.howren.dev)! \
 I am on a free tier though so the front/backend will spin off after about 15 minutes of activity and will take a few minutes to retrieve data. \
-# [Check Out Stocky Today!!!](stocky.howren.dev)
+# [Check Out Stocky Today!!!](https://stocky.howren.dev)
 ### Stocks Home Page
 ![alt text](ProjectImages/Stocks_Home.png)
 ### Stock View

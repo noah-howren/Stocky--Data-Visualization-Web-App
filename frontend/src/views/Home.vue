@@ -1,31 +1,32 @@
 <template>
-    <v-app app theme="myCustomDark">
+    <v-app app theme="myCustomDark" class="app-container">
         <nav_bar></nav_bar>
         <img :src="background" class="background" :key="background">
         <div class="content-wrapper">
-            <div v-show =isCharts class="chart_section">
-                <div class="chart_header">{{chartCaption}}</div>
-                <div class="chart_container">
-                    <div v-for="(chart, index) in chartData" :key="index" class="chart_box">
-                        <h3 class="chart_title">{{chart.title}}</h3>
+            <div v-show="isCharts" class="full-width-section">
+                <div class="section-header">{{chartCaption}}</div>
+                <div class="content-container">
+                    <div v-for="(chart, index) in chartData" :key="index" class="chart-box">
+                        <h3 class="chart-title">{{chart.title}}</h3>
                         <apexchart
-                            class="spy"
-                            type="line"
-                            :height="300"
-                            :width="500"
-                            :series="chart.data"
-                            :options="chart.chartOpt"
-                        />
+                                type="line"
+                                :height="'100%'"
+                                :width="'100%'"
+                                :series="chart.data"
+                                :options="chart.chartOpt"
+                                class="chart-container"
+                            />
                     </div>
                 </div>
             </div>
-            <div v-show =isNews class="news_section">
-                <div class="news_header">Market News</div>
-                    <div class="news_container" v-if="newsData.length > 0">
-                        <div v-for="(article, index) in newsData" :key="index" class="news_box">
-                            <v-img :src="article.image_url" height="120px" width="100%" cover></v-img>
-                            <h3 class="news_title">{{ article.title }}</h3>
-                            <a :href="article.url" target="_blank" class="news_link">Read More</a>
+            
+            <div v-show="isNews" class="full-width-section">
+                <div class="section-header">Market News</div>
+                <div class="content-container" v-if="newsData.length > 0">
+                    <div v-for="(article, index) in newsData" :key="index" class="news-box">
+                        <v-img :src="article.image_url" height="120px" width="100%" cover></v-img>
+                        <h3 class="news-title">{{ article.title }}</h3>
+                        <a :href="article.url" target="_blank" class="news-link">Read More</a>
                     </div>
                 </div>
             </div>
@@ -61,7 +62,13 @@
                     chart: {
                         type: 'line',
                         id: 'lines',
-                        fontFamily: 'Rubik, sans-serif'
+                        fontFamily: 'Rubik, sans-serif',
+                        parentHeightOffset: 0,
+                        height: '100%',
+                        width: '100%',
+                        toolbar: {
+                            show: false
+                        },
                     },
                     zoom: {
                         enabled: false
@@ -77,8 +84,38 @@
                     tooltip: {
                         enabled: true,
                         followCursor: true,
+                        theme: 'dark',
                         style: {
-                            color: 'black'
+                            fontSize: '12px',
+                            fontFamily: 'Rubik, sans-serif'
+                        },
+                        y: {
+                            formatter: function(value) {
+                                return '$' + value.toFixed(2);
+                            },
+                            title: {
+                                formatter: function() {
+                                    return 'Price: ';
+                                },
+                                style: {
+                                    color: 'black',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        marker: {
+                            show: true
+                        },
+                        // Custom tooltip styles
+                        custom: function({ series, seriesIndex, dataPointIndex, w }) {
+                            return '<div class="custom-tooltip">' +
+                                '<span class="tooltip-label">Price: </span>' +
+                                '<span class="tooltip-value">$' + series[seriesIndex][dataPointIndex].toFixed(2) + '</span>' +
+                                '</div>';
+                        },
+                        // Additional styling for custom tooltips
+                        onDatasetHover: {
+                            highlightDataSeries: true,
                         }
                     },
                     yaxis: {
@@ -107,6 +144,25 @@
                     fill: {
                         type: 'solid',
                         colors: ['#04ff00']
+                    },
+                    animations: {
+                        enabled: true,
+                        easing: 'easeinout',
+                        speed: 800,
+                        animateGradually: {
+                            enabled: true,
+                            delay: 150
+                        },
+                        dynamicAnimation: {
+                            enabled: true,
+                            speed: 350
+                        }
+                    },
+                    padding: {
+                        top: 10,
+                        right: 10,
+                        bottom: 10,
+                        left: 10
                     }
                 }
             }
@@ -190,11 +246,20 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+}
+
+.app-container {
+    width: 100vw !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
 }
 
 .v-theme--myCustomDark {
     background: transparent !important;
-    box-shadow: none; 
+    box-shadow: none !important;
 }
 
 .background {
@@ -213,66 +278,68 @@
     position: relative;
     z-index: 1;
     font-family: 'Rubik', sans-serif;
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.custom-font {
-    font-family: 'Rubik', sans-serif;
+.full-width-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 40px;
 }
 
-.chart_title {
+.section-header {
+    color: white;
+    font-size: 30px;
+    font-style: italic; 
+    font-weight: bold;
+    margin: 20px 0;
+    text-align: center;
+    width: 100%;
+}
+
+.content-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 32px;
+    padding: 0 20px;
+}
+
+.chart-box {
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    padding: 16px;
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 300px; /* Set a fixed height */
+}
+
+.chart-title {
     color: white;
     margin-bottom: 16px;
     font-size: 18px;
     font-weight: 500;
     text-align: center;
 }
-.chart_box {
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: 8px;
-    padding: 16px;
-    min-width: 450px;
-}
 
-.chart_section, .news_section {
-    padding-left: 20px;
-    width: 100%;
-    max-width: 100%;
-    align-items: center !important;
-}
-
-.news_header, .chart_header{
-    color: white;
-    font-size: 30px;
-    font-style: italic; 
-    font-weight: bold;
-    margin-left: auto;
-    margin-top: 20px;
-    margin-right: auto;
-    padding-bottom: 20px;
-    max-width: fit-content;
-}
-
-.chart_container, .news_container {
-    display: flex;
-    justify-content: center;
-    margin-left: auto;
-    margin-right: auto;
-    flex-direction: row;
-    align-items: stretch;
-    flex-wrap: wrap;
-    gap:32px;
-}
-
-.news_box {
+.news-box {
     background: rgba(0, 0, 0, 0.8);
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 532px;
+    width: 25%;
+    display: flex;
     flex-direction: column;
-    margin: 0; 
 }
 
-.news_title {
+.news-title {
     padding: 10px;
     color: white;
     font-size: 14px;
@@ -281,7 +348,7 @@
     flex-grow: 1;
 }
 
-.news_link {
+.news-link {
     display: block;
     padding: 5px 10px;
     color: #4CAF50;
@@ -290,15 +357,39 @@
     margin-top: auto;
 } 
 
-.news_link:hover {
+.news-link:hover {
     text-decoration: underline;
 }
 
-/* Make sure images in news boxes maintain aspect ratio */
-.news_box .v-img {
-    width: 535px;
+.news-box .v-img {
+    width: 100%;
     height: auto;
     object-fit: cover;
 }
 
+/* Force Vuetify containers to take full width */
+:deep(.v-application__wrap) {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+@media (max-width: 1400px) {
+    .content-container {
+        flex-wrap: wrap;
+    }
+    
+    .chart-box, .news-box {
+        width: 45%;
+    }
+}
+
+@media (max-width: 900px) {
+    .chart-box, .news-box {
+        width: 90%;
+    }
+}
+.chart-container {
+    width: 100%;
+    height: calc(100% - 40px);
+    flex-grow: 1;
+}
 </style>

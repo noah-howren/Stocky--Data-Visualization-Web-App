@@ -107,6 +107,7 @@ export default {
                 },
                 tooltip: {
                     enabled: true,
+                    theme:'dark',
                     followCursor: true,
                     style: {
                         color: 'black'
@@ -157,7 +158,6 @@ export default {
         async getData() {
             this.tick = this.$route.params.Ticker;
             const path = `https://stocky-backend.onrender.com/query${this.$route.path}/${this.selectedInterval}`;
-            console.log(path)
             try {
                 const response = await axios.get(path);
                 const { chartData, newsData, infoData } = response.data;

@@ -1,84 +1,87 @@
 <template>
-        <v-app-bar :elevation="24" theme="dark">
-            <img :src="logo" class="logo"> 
-            <div class="search_container" >
-                <v-combobox
-                    label="Enter a Stock Ticker"
-                    :items="tickerList"
-                    density="comfortable"
-                    v-model="selectedTicker"
-                    style="font-family: Rubik, sans-serif;"
-                    class="stocks"
-                ></v-combobox>
-                <div class="srch_btn_container">
-                    <v-btn
-                        x-large
-                        v-on:click="search"
-                        color="green"
-                        class="text-xs-center"
-                        variant="flat"
-                    >
-                        Search
-                    </v-btn>
-                </div>
-            </div>
-            <v-spacer></v-spacer>
-            <div class="stocks_btn_container">
-                <v-btn
-                    x-large
-                    v-on:click="stocks"
-                    color="green"
-                    class="text-xs-center"
-                    variant="flat"
-                >
-                    Stocks
-                </v-btn>
-            </div>
-            <div class="crypto_btn_container">
-                <v-btn
-                    x-large
-                    v-on:click="crypto"
-                    color="deep-purple-accent-2"
-                    class="text-xs-center"
-                    variant="flat"
-                >
-                Crypto
-                </v-btn>
-            </div>
-    </v-app-bar>
-        <div class="marquee_container">
-            <Vue3Marquee
-                :key="volumeList.length"
-                :loop=0
-                :duration = 100
-                :clone="false"
-                :pauseOnHover="true">
-                <div style="display: flex; gap: 50px;"> 
-                    <router-link 
-                        v-for="item in volumeList" 
-                        :key="item.symbol" 
-                        :to="pathAdd + item.symbol" s
-                    >
-                    <span class="symbol">
-                        {{ item.symbol }}
-                    </span>
-                    <span v-if="item.change > 0" class="if-up">
-                        {{ " " + item.price + " ↑"}}
-                    </span>
-                    <span v-else class="if-down">
-                        {{ " " +  item.price + " ↓" }}
-                    </span>
-                    </router-link>
-                </div>
-                <span>&emsp; &emsp; &emsp;</span>
-            </Vue3Marquee>
+<v-app-bar :elevation="24" theme="dark">
+    <img :src="logo" class="logo"> 
+    <div class="search_container" >
+        <v-combobox
+            label="Enter a Stock Ticker"
+            :items="tickerList"
+            density="comfortable"
+            v-model="selectedTicker"
+            style="font-family: Rubik, sans-serif;"
+            class="stocks"
+        ></v-combobox>
+        <div class="srch_btn_container">
+            <v-btn
+                x-large
+                v-on:click="search"
+                color="green"
+                class="text-xs-center"
+                variant="flat"
+            >
+                Search
+            </v-btn>
         </div>
+    </div>
+    <v-spacer></v-spacer>
+    <div class="stocks_btn_container">
+        <v-btn
+            x-large
+            v-on:click="stocks"
+            color="green"
+            class="text-xs-center"
+            variant="flat"
+        >
+            Stocks
+        </v-btn>
+    </div>
+    <div class="crypto_btn_container">
+        <v-btn
+            x-large
+            v-on:click="crypto"
+            color="deep-purple-accent-2"
+            class="text-xs-center"
+            variant="flat"
+        >
+        Crypto
+        </v-btn>
+    </div>
+    </v-app-bar>
+    <div class="marquee_container">
+    <Vue3Marquee
+      :key="volumeList.length"
+      :loop="0"
+      :duration="40" 
+      :pauseOnHover="true"
+      style="padding: 5px 0;"
+    >
+        <div style="display: flex; gap: 50px; padding: 0 10px;"> 
+            <router-link 
+                v-for="item in volumeList" 
+                :key="item.symbol" 
+                :to="pathAdd + item.symbol"
+                style="text-decoration: none; display: flex; align-items: center;"
+            >
+            <span class="symbol">
+                {{ item.symbol }}
+            </span>
+            <span v-if="item.change > 0" class="if-up">
+                {{ " " + item.price + " ↑"}}
+            </span>
+            <span v-else class="if-down">
+                {{ " " + item.price + " ↓" }}
+            </span>
+            </router-link>
+        </div>
+        <span>&emsp; &emsp; &emsp;</span>
+    </Vue3Marquee>
+  </div>
 </template>
 
 <script>
 import logo_stocks from '@/assets/logo.png'
 import logo_crypto from '@/assets/crypto_logo.png'
-import { useRoute } from 'vue-router'
+import { Vue3Marquee } from 'vue3-marquee' 
+import 'vue3-marquee/dist/style.css' 
 import router from '@/router/index.js'
 import axios from 'axios'
 export default{
